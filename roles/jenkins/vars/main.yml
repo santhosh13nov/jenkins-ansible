@@ -1,0 +1,29 @@
+jenkins_packages:
+  - java-1.8.0-openjdk
+  - nginx
+  - telnet
+  - git
+jenkins_repo_url: http://pkg.jenkins.io/redhat
+jenkins_repo_key_url: https://pkg.jenkins.io/redhat/jenkins.io.key
+etchosts:
+- {hostname: "ec2-18-217-45-98.us-east-2.compute.amazonaws.com", ip: "18.217.45.98"}
+#  - {hostname: "prod1", ip: "10.33.188.10"}
+#  - {hostname: "dr1", ip: "10.32.188.11"}
+#  - {hostname: "artifactory", ip: "172.31.100.161"}
+epelReleaseMajorVersion: 7
+jenkins_nginx_sslcert_generate: true
+jenkins_nginx_sslcert_country: "UK"
+jenkins_nginx_sslcert_locality: "London"
+jenkins_nginx_sslcert_organization: "MyComp"
+jenkins_nginx_sslcert_state: "London"
+jenkins_nginx_sslcert_common_name: "jenkins-prod.aws.mycomp.com"
+jenkins_nginx_sslcert_days: "365"
+jenkins_nginx_sslcert_fields: "/C={{jenkins_nginx_sslcert_country}}/ST={{jenkins_nginx_sslcert_state}}/L={{jenkins_nginx_sslcert_locality}}/O={{jenkins_nginx_sslcert_organization}}/CN={{jenkins_nginx_sslcert_common_name}}"
+
+jenkins_nginx_sslcert_path: "/etc/nginx/ssl"
+jenkins_nginx_sslcert_owner: "nginx"
+jenkins_nginx_sslcert_group: "nginx"
+jenkins_nginx_sslcert_key_path: "{{jenkins_nginx_sslcert_path}}/{{jenkins_nginx_sslcert_common_name}}.key"
+jenkins_nginx_sslcert_crt_path: "{{jenkins_nginx_sslcert_path}}/{{jenkins_nginx_sslcert_common_name}}.crt"
+jenkins_nginx_sslcert_csr_path: "{{jenkins_nginx_sslcert_path}}/{{jenkins_nginx_sslcert_common_name}}.csr"
+jenkins_nginx_sslcert_mode: "0700"

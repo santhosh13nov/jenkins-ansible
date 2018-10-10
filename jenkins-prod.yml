@@ -1,0 +1,8 @@
+---
+# jenkins-prod.yml
+- hosts: jenkins-prod
+  tags: ['jenkins-prod']
+  gather_facts: no
+  become: true
+  roles:
+    - jenkins

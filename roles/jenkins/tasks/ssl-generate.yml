@@ -1,0 +1,17 @@
+- name: Install openssl packages
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - openssl
+
+- name: Ensure ssl for folder exist
+  file:
+    path: "{{ jenkins_nginx_sslcert_path }}"
+    state: directory
+    owner: "{{ jenkins_nginx_sslcert_owner }}"
+    group: "{{ jenkins_nginx_sslcert_group }}"
+    mode: "{{ jenkins_nginx_sslcert_mode }}"
+
+- name: Generate ssl cert
+  command: openssl req -x509 -nodes -days {{ jenkins_nginx_sslcert_days }} -subj "{{ jenkins_nginx_sslcert_fields }}" -newkey rsa:4096 -keyout {{ jenkins_nginx_sslcert_key_path }} -out {{ jenkins_nginx_sslcert_crt_path }}

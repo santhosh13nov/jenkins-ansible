@@ -1,0 +1,76 @@
+---
+- name: Be sure epel-release is installed
+  yum: name=epel-release state=installed
+
+- name: Install the packages
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items: "{{ jenkins_packages }}"
+
+- name: Add Jenkins repo GPG key.
+  rpm_key:
+    state: present
+    key: "{{ jenkins_repo_key_url }}"
+
+- name: Setup Jenkins Repo
+  yum_repository:
+    name: jenkins
+    description: Jenkins Yum Repo
+    gpgcheck: yes
+    baseurl: "{{ jenkins_repo_url }}"
+    enabled: yes
+
+- name: Install jenkins
+  yum:
+    name: jenkins
+    state: installed
+
+- include: ssl-generate.yml
+  static: no
+  when:
+    jenkins_nginx_sslcert_generate
+
+- name: setup nginx.conf
+  template: src=nginx.conf.j2 dest=/etc/nginx/nginx.conf
+  notify:
+  - restart nginx
+
+- name: Install libselinux-python
+  yum:
+    name: libselinux-python  
+    state: present
+
+- name: Install libsemanage-python
+  yum:
+    name: libsemanage-python
+    state: present
+
+#- name: Enable nginx to connect to jenkins
+#  seboolean:
+#    name: httpd_can_network_connect
+#    state: yes
+#    persistent: yes
+
+
+- name: Setup shell for jenkins user
+  user:
+    name: jenkins
+    shell: /bin/bash
+
+- name: Setup hosts file
+  lineinfile:
+    dest: "/etc/hosts"
+    regexp: "{{ item.hostname }}"
+    line: "{{item.ip}}      {{ item.hostname }}"
+  with_items: "{{ etchosts }}"
+
+- name: Start Jenkins and nginx
+  service:
+    name: "{{ item }}"
+    state: started
+    enabled: yes
+  with_items:
+    - jenkins
+    - nginx
+
